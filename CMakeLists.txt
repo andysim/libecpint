@@ -23,15 +23,9 @@ include_directories(${PROJECT_BINARY_DIR}/include/libecpint)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/libecpint)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/Faddeeva)
 
-add_subdirectory(src)
-
-enable_testing()
-add_subdirectory(tests)
-
+# <<< Export Config to allow other projects to automagically import this >>>
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
-
-# <<< Export Config to allow other projects to automagically import this >>>
 set(PN ${PROJECT_NAME})
 # GNUInstallDirs "DATADIR" wrong here; CMake search path wants "share".
 set(CMAKECONFIG_INSTALL_DIR "share/cmake/${PN}")
@@ -49,13 +43,10 @@ install(EXPORT "${PN}Targets"
         NAMESPACE "${PN}::"
         DESTINATION ${CMAKECONFIG_INSTALL_DIR})
 
-if(NOT TARGET ${PN}::ecpint)
-    include("${CMAKE_CURRENT_LIST_DIR}/${PN}Targets.cmake")
-endif()
-install(TARGETS ecpint
-        EXPORT "${PN}Targets"
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+add_subdirectory(src)
+
+enable_testing()
+add_subdirectory(tests)
 
 install (DIRECTORY include/libecpint DESTINATION include)
 install (FILES include/libecpint.hpp DESTINATION include)

@@ -24,4 +24,7 @@ add_library(ecpint
 	${GENERATED_SOURCES}
 )
 
-install (TARGETS ecpint DESTINATION lib)
+install(TARGETS ecpint
+        EXPORT "${PN}Targets"
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
