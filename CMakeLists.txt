@@ -28,6 +28,35 @@ add_subdirectory(src)
 enable_testing()
 add_subdirectory(tests)
 
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+# <<< Export Config to allow other projects to automagically import this >>>
+set(PN ${PROJECT_NAME})
+# GNUInstallDirs "DATADIR" wrong here; CMake search path wants "share".
+set(CMAKECONFIG_INSTALL_DIR "share/cmake/${PN}")
+configure_package_config_file(cmake/${PN}Config.cmake.in
+                              "${CMAKE_CURRENT_BINARY_DIR}/${PN}Config.cmake"
+                              INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR})
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/${PN}ConfigVersion.cmake
+                                 VERSION ${${PN}_VERSION}
+                                 COMPATIBILITY AnyNewerVersion)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PN}Config.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/${PN}ConfigVersion.cmake
+              cmake/FindTargetLAPACK.cmake
+        DESTINATION ${CMAKECONFIG_INSTALL_DIR})
+install(EXPORT "${PN}Targets"
+        NAMESPACE "${PN}::"
+        DESTINATION ${CMAKECONFIG_INSTALL_DIR})
+
+if(NOT TARGET ${PN}::ecpint)
+    include("${CMAKE_CURRENT_LIST_DIR}/${PN}Targets.cmake")
+endif()
+install(TARGETS ecpint
+        EXPORT "${PN}Targets"
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
 install (DIRECTORY include/libecpint DESTINATION include)
 install (FILES include/libecpint.hpp DESTINATION include)
 install (FILES "${PROJECT_BINARY_DIR}/include/libecpint/config.hpp" DESTINATION include/libecpint)
