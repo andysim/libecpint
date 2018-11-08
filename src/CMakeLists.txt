@@ -23,7 +23,7 @@ add_library(ecpint
 	${LIB_SOURCES}
 	${GENERATED_SOURCES}
 )
-
+target_compile_definitions(ecpint INTERFACE USING_${PN})
 install(TARGETS ecpint
         EXPORT "${PN}Targets"
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
